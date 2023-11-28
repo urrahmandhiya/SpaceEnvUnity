@@ -10,6 +10,18 @@ public class player : MonoBehaviour
     public bool walking;
     public Transform playerTrans;
 
+    // Specify the layer name in the Unity Inspector
+    public string groundLayerName = "Ground";
+
+    // Layer mask variable to be used in raycasting
+    private LayerMask groundLayer;
+
+    void Awake()
+    {
+        // Set up the layer mask in Awake instead of the constructor
+        groundLayer = LayerMask.GetMask(groundLayerName);
+    }
+
 
     void FixedUpdate()
     {
@@ -21,6 +33,7 @@ public class player : MonoBehaviour
         {
             playerRigid.velocity = -transform.forward * wb_speed * Time.deltaTime;
         }
+        AlignWithSurface();
     }
     void Update()
     {
@@ -77,5 +90,22 @@ public class player : MonoBehaviour
                 playerAnim.SetTrigger("walk");
             }
         }
+        AlignWithSurface();
     }
+
+    void AlignWithSurface()
+    {
+        // Perform raycast to detect the ground on the specified layer
+        Ray ray = new Ray(transform.position, Vector3.down);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 1.0f, groundLayer))
+        {
+            // Rotate the player to match the ground normal
+            Vector3 groundNormal = hit.normal;
+            Quaternion targetRotation = Quaternion.FromToRotation(transform.up, groundNormal) * transform.rotation;
+            playerTrans.rotation = Quaternion.Slerp(playerTrans.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+    }
+
 }
