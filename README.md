@@ -1,7 +1,6 @@
 # Space Environment Unity
 
-A very simple Space Environment with bugs.
-Unity 2021.3.8f1
+A very simple Space Environment with bugs using Unity 2021.3.8f1
 
 ## Credits
 
